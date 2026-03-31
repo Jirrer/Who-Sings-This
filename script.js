@@ -1,12 +1,18 @@
-async function searchSong() {
+function clearScreen() {
+    document.getElementById('userGuessResult').textContent = "";
     document.getElementById('searchInput').value = "";
+    document.getElementById('songName').textContent = "";
+    document.getElementById('artistName').textContent = "";
+    document.getElementById('artwork').src = "";
+}
 
+async function searchSong() {
+    clearScreen(); 
 
     const songOutput = await getSong();
     const songName =  songOutput[0];
     const songArtist = songOutput[1];
 
-    
     const url = `https://itunes.apple.com/search?term=${songName}+${songArtist}&entity=song&limit=1`;
     const response = await fetch(url);
     const json = await response.json();
@@ -45,7 +51,7 @@ function waitForEnter(inputId) {
 }
 
 async function getSong() {
-    const genre = "Pop";
+    const genre = "rock";
 
     try {
         const response = await fetch('http://127.0.0.1:5050/get-song', {
