@@ -1,21 +1,26 @@
-async function searchSong() {
+function clearScreen() {
+    document.getElementById('userGuessResult').textContent = "";
     document.getElementById('searchInput').value = "";
+    document.getElementById('songName').textContent = "";
+    document.getElementById('artistName').textContent = "";
+    document.getElementById('artwork').src = "";
+}
 
+async function searchSong() {
+    clearScreen(); 
 
     const songOutput = await getSong();
-    const songName = songOutput[0];
+    const songName =  songOutput[0];
     const songArtist = songOutput[1];
 
-    
     const url = `https://itunes.apple.com/search?term=${songName}+${songArtist}&entity=song&limit=1`;
     const response = await fetch(url);
     const json = await response.json();
 
     const player = document.getElementById('player');
     player.src = json.results[0].previewUrl;
-    await player.play(); // start playback first
+    await player.play(); 
 
-    // Wait for user to press Enter in the input box
     const playerInput = await waitForEnter('searchInput');
 
     if (getDoubleMetaphone(playerInput) === getDoubleMetaphone(songArtist)) {
@@ -45,33 +50,24 @@ function waitForEnter(inputId) {
     });
 }
 
-async function getSong() { // To-Do: return and accept any of the all artists in a song
-    const genre = "Pop";
-
-
-    const baseUrl = "https://musicbrainz.org/ws/2/recording";
-    const headers = { 'User-Agent': 'Who-Sings-This/1.0.0 ( johntestdevelopment@gmail.com )' };
+async function getSong() {
+    const genre = "rock";
 
     try {
-        // 1. Get total count for this genre
-        const initialRes = await fetch(`${baseUrl}?query=tag:${genre}&limit=1&fmt=json`, { headers });
-        const initialData = await initialRes.json();
-        const totalCount = initialData.count;
+        const response = await fetch('http://127.0.0.1:5050/get-song', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ genre: genre }),
+        });
 
-        if (totalCount === 0) return console.log("No songs found for this genre.");
+        const data = await response.json();
 
-        // 2. Pick a random offset
-        const randomOffset = Math.floor(Math.random() * Math.min(totalCount, 1000)); // Limit to 1000 for speed
-
-        // 3. Fetch the random song
-        const finalRes = await fetch(`${baseUrl}?query=tag:${genre}&limit=1&offset=${randomOffset}&fmt=json`, { headers });
-        const finalData = await finalRes.json();
-        
-        const song = finalData.recordings[0];
-
-        return [song.title, song['artist-credit'][0].name];
-    } catch (err) {
-        return false;
+        return [data['Name'], data['Artist']];
+    } catch (error) {
+        console.error('Error:', error);
+        return null;
     }
 }
 
