@@ -13,9 +13,8 @@ async function searchSong() {
 
     const player = document.getElementById('player');
     player.src = json.results[0].previewUrl;
-    await player.play(); // start playback first
+    await player.play(); 
 
-    // Wait for user to press Enter in the input box
     const playerInput = await waitForEnter('searchInput');
 
     if (getDoubleMetaphone(playerInput) === getDoubleMetaphone(songArtist)) {
