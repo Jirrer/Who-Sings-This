@@ -1,8 +1,12 @@
 async function searchSong() {
-    const songOutput = getSong();
+    document.getElementById('searchInput').value = "";
+
+
+    const songOutput = await getSong();
     const songName = songOutput[0];
     const songArtist = songOutput[1];
 
+    
     const url = `https://itunes.apple.com/search?term=${songName}+${songArtist}&entity=song&limit=1`;
     const response = await fetch(url);
     const json = await response.json();
@@ -20,7 +24,8 @@ async function searchSong() {
         document.getElementById('userGuessResult').textContent = "Wrong!"
     }
 
-    document.getElementById('artistName').textContent = json.results[0].artistName;
+    document.getElementById('songName').textContent = songName;
+    document.getElementById('artistName').textContent = songArtist;
     document.getElementById('artwork').src = json.results[0].artworkUrl100;
 }
 
@@ -40,10 +45,34 @@ function waitForEnter(inputId) {
     });
 }
 
-function getSong() {
-    // document.getElementById('searchInput').value
+async function getSong() { // To-Do: return and accept any of the all artists in a song
+    const genre = "Pop";
 
-    return ["Stone", "Alice In Chains"];
+
+    const baseUrl = "https://musicbrainz.org/ws/2/recording";
+    const headers = { 'User-Agent': 'Who-Sings-This/1.0.0 ( johntestdevelopment@gmail.com )' };
+
+    try {
+        // 1. Get total count for this genre
+        const initialRes = await fetch(`${baseUrl}?query=tag:${genre}&limit=1&fmt=json`, { headers });
+        const initialData = await initialRes.json();
+        const totalCount = initialData.count;
+
+        if (totalCount === 0) return console.log("No songs found for this genre.");
+
+        // 2. Pick a random offset
+        const randomOffset = Math.floor(Math.random() * Math.min(totalCount, 1000)); // Limit to 1000 for speed
+
+        // 3. Fetch the random song
+        const finalRes = await fetch(`${baseUrl}?query=tag:${genre}&limit=1&offset=${randomOffset}&fmt=json`, { headers });
+        const finalData = await finalRes.json();
+        
+        const song = finalData.recordings[0];
+
+        return [song.title, song['artist-credit'][0].name];
+    } catch (err) {
+        return false;
+    }
 }
 
 function getDoubleMetaphone(input) {
