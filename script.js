@@ -4,34 +4,44 @@ function clearScreen() {
     document.getElementById('songName').textContent = "";
     document.getElementById('artistName').textContent = "";
     document.getElementById('artwork').src = "";
+    document.getElementById('timeToGuess').innerHTML = "";
+    document.body.style.backgroundColor = "white";
 }
 
 async function searchSong() {
     clearScreen(); 
-
+    
     const songOutput = await getSong();
     const songName =  songOutput[0];
     const songArtist = songOutput[1];
-
+    
     const url = `https://itunes.apple.com/search?term=${songName}+${songArtist}&entity=song&limit=1`;
     const response = await fetch(url);
     const json = await response.json();
-
+    
     const player = document.getElementById('player');
     player.src = json.results[0].previewUrl;
-    await player.play(); 
-
+    await player.play();
+    
+    const startTime = Date.now();
+    
     const playerInput = await waitForEnter('searchInput');
-
+    
+    const millisecondsElapsed = Date.now() - startTime;
+    
     if (getDoubleMetaphone(playerInput) === getDoubleMetaphone(songArtist)) {
-        document.getElementById('userGuessResult').textContent = "Correct!"
+        document.getElementById('userGuessResult').textContent = "Correct!";
+        document.body.style.backgroundColor = "green";
     } else {
-        document.getElementById('userGuessResult').textContent = "Wrong!"
+        document.getElementById('userGuessResult').textContent = "Wrong!";
+        document.body.style.backgroundColor = "red";
     }
-
+    
     document.getElementById('songName').textContent = songName;
     document.getElementById('artistName').textContent = songArtist;
     document.getElementById('artwork').src = json.results[0].artworkUrl100;
+    document.getElementById('timeToGuess').innerHTML = `Time To Guess: ${(millisecondsElapsed / 1000)}s`
+    document.getElementById('startButton').innerHTML = 'New Song';
 }
 
 function waitForEnter(inputId) {
@@ -40,8 +50,10 @@ function waitForEnter(inputId) {
 
         const handler = (e) => {
             if (e.key === 'Enter') {
+                e.preventDefault();
                 input.removeEventListener('keydown', handler);
                 resolve(input.value.trim());
+                document.getElementById('startButton').focus();
             }
         };
 
@@ -72,5 +84,7 @@ async function getSong() {
 }
 
 function getDoubleMetaphone(input) {
-    return input;
+    let output = input.toLowerCase();
+    
+    return output;
 }
