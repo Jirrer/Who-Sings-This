@@ -5,7 +5,21 @@ function clearScreen() {
     document.getElementById('artistName').textContent = "";
     document.getElementById('artwork').src = "";
     document.getElementById('timeToGuess').innerHTML = "";
-    document.body.style.backgroundColor = "white";
+    document.body.style.backgroundColor = "lightblue";
+}
+
+let selected_genre = "rock";
+
+function selectGenre(genreInput) {
+    // Add check here
+
+    const oldGenre =  document.getElementById(`${selected_genre}GenreButton`);
+    const newGenre =  document.getElementById(`${genreInput}GenreButton`);
+
+    oldGenre.style.backgroundColor = "white";
+    newGenre.style.backgroundColor = "red";
+
+    selected_genre = genreInput; 
 }
 
 async function searchSong() {
@@ -63,15 +77,13 @@ function waitForEnter(inputId) {
 }
 
 async function getSong() {
-    const genre = "rock";
-
     try {
         const response = await fetch('http://127.0.0.1:5050/get-song', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ genre: genre }),
+            body: JSON.stringify({ genre: selected_genre }),
         });
 
         const data = await response.json();
