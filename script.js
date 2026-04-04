@@ -1,6 +1,8 @@
 
 // To-Do: add a seen hashset to avoid repeats
 // maybe pull 50 or so songs a time to limit api requests
+// To-Do: work on fuzzy search
+
 
 function clearScreen() {
     document.getElementById('userGuessResult').textContent = "";
@@ -49,7 +51,7 @@ async function searchSong() {
     
     const millisecondsElapsed = Date.now() - startTime;
  
-    if (getDoubleMetaphone(playerInput) === getDoubleMetaphone(songArtist)) {
+    if (compareMetaphoneCodes(playerInput, songArtist)) {
         document.getElementById('userGuessResult').textContent = "Correct!";
         document.body.style.backgroundColor = "green";
     } else {
@@ -103,7 +105,44 @@ async function getSong() {
 }
 
 function getDoubleMetaphone(input) {
-    let output = input.toLowerCase();
-    
-    return output;
+    const words = input
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(Boolean);
+
+    const encodedWords = words.map(word => {
+        const [primary, secondary] = doubleMetaphone(word);
+        console.log(`${word} -> primary: ${primary}, secondary: ${secondary}`);
+        return primary;
+    });
+
+    return encodedWords.join(' ');
+}
+
+function getMetaphoneCodes(input) {
+    return input
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(Boolean)
+        .map(word => {
+            const [primary, secondary] = doubleMetaphone(word);
+            return { word, primary, secondary };
+        });
+}
+
+function compareMetaphoneCodes(playerInput, songArtist) {
+    const inputCodes = getMetaphoneCodes(playerInput);
+    const artistCodes = getMetaphoneCodes(songArtist);
+
+    if (inputCodes.length !== artistCodes.length) {
+        return false;
+    }
+
+    return inputCodes.every((inputCode, index) => {
+        const artistCode = artistCodes[index];
+        const inputVariants = [inputCode.primary, inputCode.secondary].filter(Boolean);
+        const artistVariants = [artistCode.primary, artistCode.secondary].filter(Boolean);
+
+        return inputVariants.some(inputVariant => artistVariants.includes(inputVariant));
+    });
 }
