@@ -14,16 +14,17 @@
         <button id="grungeGenreButton" onClick="selectGenre('grunge')">Grunge</button>
         <button id="popGenreButton" onClick="selectGenre('pop')">Pop</button>
     </div>
-    <input tupe="text" id="searchInput">
-    <button id="startButton" onClick="searchSong()">Start</button>
-    <br>
-    <br>
-    <audio id="player" controls></audio>
-    <p id="userGuessResult"></p>
-    <p id="songName"></p>
-    <p id="artistName"></p>
-    <br>
-    <img id="artwork">
-    <p id="timeToGuess"></p>
+    <div id="playerInfo">
+        <input tupe="text" id="searchInput" placeholder="Who Sings This?">
+        <button id="startButton" onClick="searchSong()">Start</button>
+        <p id="playingStatus"></p>
+        <audio id="player" controls></audio>
+        <p id="userGuessResult"></p>
+        <p id="songName"></p>
+        <p id="artistName"></p>
+        <br>
+        <img id="artwork">
+        <p id="timeToGuess"></p>
+    </div>
 </body>
 </html>

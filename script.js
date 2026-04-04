@@ -1,3 +1,7 @@
+
+// To-Do: add a seen hashset to avoid repeats
+// maybe pull 50 or so songs a time to limit api requests
+
 function clearScreen() {
     document.getElementById('userGuessResult').textContent = "";
     document.getElementById('searchInput').value = "";
@@ -17,7 +21,7 @@ function selectGenre(genreInput) {
     const newGenre =  document.getElementById(`${genreInput}GenreButton`);
 
     oldGenre.style.backgroundColor = "white";
-    newGenre.style.backgroundColor = "red";
+    newGenre.style.backgroundColor = "lightblue";
 
     selected_genre = genreInput; 
 }
@@ -32,6 +36,8 @@ async function searchSong() {
     const url = `https://itunes.apple.com/search?term=${songName}+${songArtist}&entity=song&limit=1`;
     const response = await fetch(url);
     const json = await response.json();
+
+    document.getElementById('playingStatus').innerHTML = 'Playing...'
     
     const player = document.getElementById('player');
     player.src = json.results[0].previewUrl;
@@ -42,7 +48,7 @@ async function searchSong() {
     const playerInput = await waitForEnter('searchInput');
     
     const millisecondsElapsed = Date.now() - startTime;
-    
+ 
     if (getDoubleMetaphone(playerInput) === getDoubleMetaphone(songArtist)) {
         document.getElementById('userGuessResult').textContent = "Correct!";
         document.body.style.backgroundColor = "green";
@@ -51,8 +57,9 @@ async function searchSong() {
         document.body.style.backgroundColor = "red";
     }
     
-    document.getElementById('songName').textContent = songName;
-    document.getElementById('artistName').textContent = songArtist;
+    document.getElementById('playingStatus').innerHTML = "";
+    document.getElementById('songName').textContent = `Name: ${songName}`;
+    document.getElementById('artistName').textContent = `Artist: ${songArtist}`;
     document.getElementById('artwork').src = json.results[0].artworkUrl100;
     document.getElementById('timeToGuess').innerHTML = `Time To Guess: ${(millisecondsElapsed / 1000)}s`
     document.getElementById('startButton').innerHTML = 'New Song';
