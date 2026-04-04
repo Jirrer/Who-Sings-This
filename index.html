@@ -5,18 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Who Sings This</title>
     <script src="script.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- <input type="text" id="genreInput"> -->
-    <input tupe="text" id="searchInput">
-    <button onClick="searchSong()">Start</button>
-    <br>
-    <br>
-    <audio id="player" controls></audio>
-    <p id="userGuessResult"></p>
-    <p id="songName"></p>
-    <p id="artistName"></p>
-    <br>
-    <img id="artwork">
+    <div id="genreButtons">
+        <button id="rockGenreButton" onClick="selectGenre('rock')">Rock</button>
+        <button id="countryGenreButton" onClick="selectGenre('country')">Country</button>
+        <button id="grungeGenreButton" onClick="selectGenre('grunge')">Grunge</button>
+        <button id="popGenreButton" onClick="selectGenre('pop')">Pop</button>
+    </div>
+    <div id="playerInfo">
+        <input tupe="text" id="searchInput" placeholder="Who Sings This?">
+        <button id="startButton" onClick="searchSong()">Start</button>
+        <p id="playingStatus"></p>
+        <audio id="player" controls></audio>
+        <p id="userGuessResult"></p>
+        <p id="songName"></p>
+        <p id="artistName"></p>
+        <br>
+        <img id="artwork">
+        <p id="timeToGuess"></p>
+    </div>
 </body>
 </html>

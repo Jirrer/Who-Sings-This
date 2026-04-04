@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: lightblue;
+    display: grid;
+}
+
+#genreButtons {
+    display: flex;
+    width: 100%;
+    height: 5vh;
+}
+
+#genreButtons button {
+    flex-grow: 1;
+}
+
+#playerInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 95vh; 
+    gap: 5px;
+}
+
+#playerInfo button {
+    font-size: xx-large;
+}
+
+#playerInfo input {
+    font-size: xx-large;
+    text-align: center;
+}
+
+#player {
+    display: none;
+}
